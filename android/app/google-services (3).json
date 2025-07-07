@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "451320075474",
+    "project_id": "lastminutesapp",
+    "storage_bucket": "lastminutesapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451320075474:android:ef9e33dcababf4204dc90b",
+        "android_client_info": {
+          "package_name": "com.example.lastminutesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "451320075474-2triku2n9r4h38ns2enb2ik6oep9bbbr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lastminutesapp",
+            "certificate_hash": "93c29f1c5c874f9adadda63986ea533f5373707b"
+          }
+        },
+        {
+          "client_id": "451320075474-lt5g1vbtpvv9e24mjtrgjs2vchd34kvp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHL_XM6x2Gj69m9n_9o4uXKRBMNHF9h2s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "451320075474-lt5g1vbtpvv9e24mjtrgjs2vchd34kvp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "451320075474-21f5tr88vpu65cq4kh2q25nq8dimtt94.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lastminutesapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
