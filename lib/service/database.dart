@@ -23,7 +23,6 @@ class database {
     return FirebaseFirestore.instance
         .collection("Order details")
         .where("Number", isEqualTo: mobile)
-        .where("Email", isEqualTo: email)
         .snapshots();
   }
 

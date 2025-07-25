@@ -59,7 +59,7 @@ class _ProductState extends State<Product> {
           ),
         );
       });
-    } else {
+    }    else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Center(
