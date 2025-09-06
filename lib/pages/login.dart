@@ -40,7 +40,7 @@ class LoginPage extends StatelessWidget {
               child: InkWell(
                 onTap:() => Get.offAll(AdminLogin()),
                 child: Text(
-                  "Admin",
+                  "Admin log",
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: screenWidth * 0.045,
