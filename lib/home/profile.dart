@@ -204,7 +204,7 @@ class _profileState extends State<profile> {
                                 value.setBool("loginfo", false);
                                 Navigator.pushAndRemoveUntil(
                                   context,
-                                  MaterialPageRoute(builder: (_) => Login()),
+                                  MaterialPageRoute(builder: (_) => LoginPage()),
                                   (route) => false,
                                 );
                               },

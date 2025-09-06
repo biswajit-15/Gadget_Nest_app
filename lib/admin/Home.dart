@@ -27,7 +27,7 @@ class _AdminhomeState extends State<Adminhome> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return Login();
+                      return LoginPage();
                     },
                   ),
                 );

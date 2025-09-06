@@ -31,7 +31,8 @@ class UiHelper {
       onPressed: () {
         onpress();
       },
-      style: ElevatedButton.styleFrom(backgroundColor: color),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,),
       child: Text(text, style: TextStyle(color: fcolor)),
     );
   }
@@ -71,5 +72,59 @@ class UiHelper {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
+  }
+  static texts(String text,double textSize,FontWeight fontWeight,Color? color){
+    return Text(text,style:  TextStyle(fontWeight: fontWeight,fontSize: textSize,color: color),);
+  }
+  static banner(String title,String image,Color backgroundColor,String buttonTitle){
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: backgroundColor,
+            ),
+            height: 150,
+            width: double.infinity,
+            child: Text(
+              //"\n  Get 31% Off Your \n  First Order",
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 250,
+            child: Image.asset(
+              //"assets/images/Adobe Express - file (11).png",
+              image,
+              width: 110,
+            ),
+          ),
+          Positioned(
+            top: 100,
+            left: 20,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.red,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  buttonTitle,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
   }
 }
