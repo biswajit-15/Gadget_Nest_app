@@ -15,21 +15,22 @@ class _AdminOrderState extends State<AdminOrder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade300,
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: const Text(
-          "Order Pending",
+          "Pending Orders",
           style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 25,
-            color: Colors.red,
+            fontWeight: FontWeight.w600,
+            fontSize: 22,
+            color: Colors.black,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.grey.shade300,
+        elevation: 0,
+        backgroundColor: Colors.white,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: const Icon(Icons.chevron_left, size: 40),
+          child: const Icon(Icons.chevron_left, size: 32, color: Colors.black),
         ),
       ),
       body: StreamBuilder(
@@ -40,95 +41,109 @@ class _AdminOrderState extends State<AdminOrder> {
           }
 
           if (!snapshot.hasData || snapshot.data.docs.isEmpty) {
-            return const Center(child: Text("No pending orders found."));
+            return const Center(
+              child: Text(
+                "No pending orders found.",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            );
           }
 
           return ListView.builder(
+            padding: const EdgeInsets.all(12),
             itemCount: snapshot.data.docs.length,
             itemBuilder: (context, index) {
               DocumentSnapshot order = snapshot.data.docs[index];
-              return Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 7),
-                child: Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+              return Card(
+                elevation: 4,
+                shadowColor: Colors.black26,
+                margin: const EdgeInsets.only(bottom: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
                         child: Image.network(
                           order["Image"],
-                          width: 110,
-                          height: 130,
+                          width: 100,
+                          height: 120,
                           fit: BoxFit.cover,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 25, left: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Order Id: ${order["OderId"]}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                order["Name"],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Number: +91 ${order["Number"]}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 17,
+                              const SizedBox(height: 4),
+                              Text(
+                                "Order ID: ${order["OderId"]}",
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "P_Name: ${order["Name"]}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 17,
+                              Text(
+                                "Customer: +91 ${order["Number"]}",
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Price: ₹${order["price"]}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 20,
+                              const SizedBox(height: 6),
+                              Text(
+                                "₹${order["price"]}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 20,
+                                  color: Colors.green,
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 50, top: 20),
-                              child: GestureDetector(
-                                onTap: () {
-                                  database().Updatestatus(
-                                    order["Number"],
-                                    order.id,
-                                  );
-                                },
-                                child: Container(
-                                  height: 40,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(10),
+                              const SizedBox(height: 12),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    database().Updatestatus(
+                                      order["Number"],
+                                      order.id,
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 10),
                                   ),
-                                  child: const Center(
-                                    child: Text(
-                                      "Done",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  icon: const Icon(Icons.check,
+                                      color: Colors.white, size: 18),
+                                  label: const Text(
+                                    "Mark Done",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ],

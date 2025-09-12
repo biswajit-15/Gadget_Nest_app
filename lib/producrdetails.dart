@@ -5,7 +5,8 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Producrdetails extends StatefulWidget {
-  String imgurl, price, name, details;
+  final String imgurl, price, name, details;
+
   Producrdetails({
     super.key,
     required this.name,
@@ -13,6 +14,7 @@ class Producrdetails extends StatefulWidget {
     required this.details,
     required this.price,
   });
+
   @override
   State<Producrdetails> createState() => _ProducrdetailsState();
 }
@@ -20,6 +22,7 @@ class Producrdetails extends StatefulWidget {
 class _ProducrdetailsState extends State<Producrdetails> {
   String? email, Mobile, Address;
   late Razorpay _razorpay;
+  bool _isImageLoading = true;
 
   @override
   void initState() {
@@ -38,11 +41,30 @@ class _ProducrdetailsState extends State<Producrdetails> {
     email = value.getString("UserEmail");
     Mobile = value.getString("UserMobile");
     Address = value.getString("UserAddress");
+    setState(() {});
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     print("Payment Successful: ${response.paymentId}");
-    // Show success dialog or push to order summary screen
+    // Show success dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Payment Successful"),
+          content: Text("Your order has been placed successfully. Order ID: ${response.paymentId}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+
     Map<String, dynamic> details = {
       "OderId": response.paymentId,
       "Image": widget.imgurl,
@@ -58,6 +80,12 @@ class _ProducrdetailsState extends State<Producrdetails> {
 
   void _handlePaymentError(PaymentFailureResponse response) async {
     print("Payment Failed: ${response.message}");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Payment failed: ${response.message ?? 'Unknown error'}"),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -73,98 +101,227 @@ class _ProducrdetailsState extends State<Producrdetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade100,
-        leading: GestureDetector(
-          onTap: () {
+        backgroundColor: Colors.white,
+        elevation: 1,
+        leading: IconButton(
+          onPressed: () {
             Navigator.pop(context);
           },
-          child: Icon(Icons.arrow_back_ios_new),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
         ),
+        title: Text(
+          "Product Details",
+          style: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(widget.imgurl, fit: BoxFit.contain),
+            // Product Image with loading state
             Container(
-              decoration: BoxDecoration(color: Colors.white),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              height: 300,
+              width: double.infinity,
+              color: Colors.grey.shade100,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      top: 20,
-                      right: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          widget.name,
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '₹${widget.price}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 25,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, top: 20),
-                    child: Text(
-                      "Details",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(widget.details, style: TextStyle(fontSize: 15)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      top: 25,
-                      right: 20,
-                    ),
-                    child: Container(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (Mobile == null && Address == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Fill User Details First"),
-                              ),
-                            );
-                          } else {
-                            openCheckout();
+                  if (_isImageLoading)
+                    const CircularProgressIndicator(),
+
+                  Image.network(
+                    widget.imgurl,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_isImageLoading) {
+                            setState(() {
+                              _isImageLoading = false;
+                            });
                           }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                        ),
-                        child: Text(
-                          "Buy Now",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                      ),
+                        });
+                        return child;
+                      }
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.broken_image, color: Colors.grey, size: 50),
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            // Product Info Card
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              widget.name,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            '₹${widget.price}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 22,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Product Details",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.details,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade700,
+                          height: 1.4,
+                        ),
+                        textAlign: TextAlign.justify,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // User Info Card
+            if (Mobile != null || Address != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Delivery Info",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        if (Mobile != null)
+                          Row(
+                            children: [
+                              Icon(Icons.phone, color: Colors.blue.shade700, size: 20),
+                              const SizedBox(width: 10),
+                              Text(
+                                Mobile!,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        if (Address != null) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.location_on, color: Colors.blue.shade700, size: 20),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  Address!,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+            // Buy Now Button
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (Mobile == null || Address == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text("Please complete your profile details first"),
+                          backgroundColor: Colors.orange.shade700,
+                          action: SnackBarAction(
+                            label: "OK",
+                            onPressed: () {},
+                          ),
+                        ),
+                      );
+                    } else {
+                      openCheckout();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: const Text(
+                    "Buy Now",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -175,10 +332,14 @@ class _ProducrdetailsState extends State<Producrdetails> {
 
   void openCheckout() async {
     var options = {
-      'key': 'rzp_test_x6GNCH7uTtYL9U', // ← Use your own Razorpay Key
-      'amount': calculate() * 100, // Amount in paise (50000 = ₹500)
+      'key': 'rzp_test_x6GNCH7uTtYL9U', // Use your own Razorpay Key
+      'amount': calculate() * 100, // Amount in paise
       'name': 'Last Minutes Store',
-      'description': 'Buy Electronics',
+      'description': widget.name,
+      'prefill': {
+        'contact': Mobile,
+        'email': email
+      },
       'external': {
         'wallets': ['paytm'],
       },
@@ -187,6 +348,12 @@ class _ProducrdetailsState extends State<Producrdetails> {
       _razorpay.open(options);
     } catch (e) {
       debugPrint(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

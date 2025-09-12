@@ -14,6 +14,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final controller = Get.put(UserHomeController());
+  final PageController _bannerController = PageController();
+  int _currentBannerIndex = 0;
   var Catagory = [
     {"img": "assets/images/Adobe Express - file (11).png", "item": "Mobile"},
     {"img": "assets/images/Adobe Express - file (2).png", "item": "Watch"},
@@ -23,6 +25,63 @@ class _HomeState extends State<Home> {
     {"img": "assets/images/Adobe Express - file (12).png", "item": "Charger"},
     {"img": "assets/images/Adobe Express - file (7).png", "item": "Headphone"},
   ];
+
+  // Banner data
+  final List<Map<String, dynamic>> banners = [
+    {
+      "title": "\n  Get 31% Off Your \n  First Order",
+      "image": const_value.galaxyS24,
+      "color": Colors.green,
+      "buttonText": "BUY NOW"
+    },
+    {
+      "title": "\n  New Arrivals \n  Just In!",
+      "image": const_value.photo7, // Add your image path
+      "color": Colors.blue,
+      "buttonText": "SHOP NOW"
+    },
+    {
+      "title": "\n  Free Shipping \n  On All Orders",
+      "image": const_value.photo11, // Add your image path
+      "color": Colors.orange,
+      "buttonText": "EXPLORE"
+    }
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.getName();
+
+    // Auto-scroll banners
+    _startBannerTimer();
+  }
+
+  @override
+  void dispose() {
+    _bannerController.dispose();
+    super.dispose();
+  }
+
+  void _startBannerTimer() {
+    Future.delayed(Duration(seconds: 5), () {
+      if (_bannerController.hasClients) {
+        if (_currentBannerIndex < banners.length - 1) {
+          _bannerController.nextPage(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        } else {
+          _bannerController.animateToPage(
+            0,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+        _startBannerTimer();
+      }
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -38,7 +97,7 @@ class _HomeState extends State<Home> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Obx(
-            () => Column(
+                () => Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -49,7 +108,7 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Obx(
-                            () => UiHelper.texts(
+                                () => UiHelper.texts(
                               "Hey, ${controller.username.value}",
                               25,
                               FontWeight.bold,
@@ -85,12 +144,57 @@ class _HomeState extends State<Home> {
                   Icon(Icons.search),
                   Colors.white,
                 ),
-                UiHelper.banner(
-                  "\n  Get 31% Off Your \n  First Order",
-                  const_value.galaxyS24,
-                  Colors.green,
-                  "BUY NOW",
+
+                // Banner Slider
+                Container(
+                  height: 180,
+                  margin: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  child: Stack(
+                    children: [
+                      PageView.builder(
+                        controller: _bannerController,
+                        itemCount: banners.length,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentBannerIndex = index;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return UiHelper.banner(
+                            banners[index]["title"],
+                            banners[index]["image"],
+                            banners[index]["color"],
+                            banners[index]["buttonText"],
+                          );
+                        },
+                      ),
+
+                      // Banner Indicators
+                      Positioned(
+                        bottom: 10,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(banners.length, (index) {
+                            return Container(
+                              width: 8,
+                              height: 8,
+                              margin: EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _currentBannerIndex == index
+                                    ? Colors.white
+                                    : Colors.white.withOpacity(0.5),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
                   child: Row(
@@ -129,8 +233,8 @@ class _HomeState extends State<Home> {
                                       builder: (context) {
                                         return productlist(
                                           Category:
-                                              Catagory[index]["item"]
-                                                  .toString(),
+                                          Catagory[index]["item"]
+                                              .toString(),
                                         );
                                       },
                                     ),
@@ -145,7 +249,7 @@ class _HomeState extends State<Home> {
                                   ),
                                   child: Column(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                    MainAxisAlignment.spaceAround,
                                     children: [
                                       UiHelper.imagebulider(
                                         img: Catagory[index]["img"].toString(),
@@ -211,7 +315,7 @@ class _HomeState extends State<Home> {
                               ),
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                MainAxisAlignment.spaceAround,
                                 children: [
                                   Image.asset(
                                     "assets/images/Adobe Express - file (7).png",

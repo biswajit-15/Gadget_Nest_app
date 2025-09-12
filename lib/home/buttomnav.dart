@@ -14,7 +14,7 @@ class Buttomnav extends StatefulWidget {
 
 class _ButtomnavState extends State<Buttomnav> {
   int currentIndex = 0;
-  List<Widget> page = [Home(), cart(), profile()];
+  List<Widget> page = [Home(), Cart(), Profile()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

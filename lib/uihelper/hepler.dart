@@ -78,7 +78,7 @@ class UiHelper {
   }
   static banner(String title,String image,Color backgroundColor,String buttonTitle){
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+      padding: const EdgeInsets.only(left: 7, right: 7, top: 10),
       child: Stack(
         children: [
           Container(
@@ -86,7 +86,7 @@ class UiHelper {
               borderRadius: BorderRadius.circular(10),
               color: backgroundColor,
             ),
-            height: 150,
+            height: 170,
             width: double.infinity,
             child: Text(
               //"\n  Get 31% Off Your \n  First Order",
@@ -98,7 +98,8 @@ class UiHelper {
             ),
           ),
           Positioned(
-            left: 250,
+            left: 230,
+            top: 10,
             child: Image.asset(
               //"assets/images/Adobe Express - file (11).png",
               image,
