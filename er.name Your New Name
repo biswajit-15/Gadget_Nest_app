@@ -1,0 +1,29 @@
+[33mcommit cac4d4c905cf759e51ac9916fca306c7d750682d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Biswajit Sinha <sinhabiswajit140@gmail.com>
+Date:   Sat Sep 13 02:36:16 2025 +0530
+
+    fixed some ui
+
+[33mcommit 5e26c07f5949195edc1b11163962f2804671ff6a[m
+Author: Biswajit Sinha <sinhabiswajit140@gmail.com>
+Date:   Sat Sep 6 13:45:14 2025 +0530
+
+    Updated login page UI/functionality
+
+[33mcommit ff94a3404566aac15f370547c6fe65a92d704a0f[m
+Author: Biswajit Sinha <sinhabiswajit140@gmail.com>
+Date:   Sat Sep 6 12:44:13 2025 +0530
+
+    Initial commit: Complete LastMinutesApp with authentication, home screen, profile, and controllers
+
+[33mcommit 58f519dda0b17a5aa51c6dbcb2450f7b36618499[m
+Author: Biswajit Sinha <sinhabiswajit140@gmail.com>
+Date:   Sat Jul 26 00:57:26 2025 +0530
+
+    testing
+
+[33mcommit 4199abf81c5abe23d46f96cc8f5b1b08ae8d3bb6[m
+Author: Biswajit Sinha <sinhabiswajit140@gmail.com>
+Date:   Mon Jul 7 09:48:20 2025 +0530
+
+    Initial commit
